@@ -5,15 +5,16 @@ import { cn } from "@/lib/utils";
 
 import { Progress } from "./ui/progress";
 
-const Category = ({ category }: CategoryProps) => {
+const Category = ({ category }: CategoryProps) =>
+{
   const {
     bg,
     circleBg,
     text: { main, count },
-    progress: { bg: progressBg, indicator },
+    progress: { bg: progressBg },
     icon,
   } = topCategoryStyles[category.name as keyof typeof topCategoryStyles] ||
-  topCategoryStyles.default;
+    topCategoryStyles.default;
 
   return (
     <div className={cn("gap-[18px] flex p-4 rounded-xl", bg)}>
@@ -28,7 +29,7 @@ const Category = ({ category }: CategoryProps) => {
         <Progress
           value={(category.count / category.totalCount) * 100}
           className={cn("h-2 w-full", progressBg)}
-          indicatorClassName={cn("h-2 w-full", indicator)}
+          // indicatorClassName={cn("h-2 w-full", indicator)}
         />
       </div>
     </div>
