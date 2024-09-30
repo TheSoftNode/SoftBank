@@ -4,12 +4,14 @@ import qs from "query-string";
 import { twMerge } from "tailwind-merge";
 import { z } from "zod";
 
-export function cn(...inputs: ClassValue[]) {
+export function cn(...inputs: ClassValue[])
+{
   return twMerge(clsx(inputs));
 }
 
 // FORMAT DATE TIME
-export const formatDateTime = (dateString: Date) => {
+export const formatDateTime = (dateString: Date) =>
+{
   const dateTimeOptions: Intl.DateTimeFormatOptions = {
     weekday: "short", // abbreviated weekday name (e.g., 'Mon')
     month: "short", // abbreviated month name (e.g., 'Oct')
@@ -66,7 +68,8 @@ export const formatDateTime = (dateString: Date) => {
   };
 };
 
-export function formatAmount(amount: number): string {
+export function formatAmount(amount: number): string
+{
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -77,18 +80,22 @@ export function formatAmount(amount: number): string {
 }
 
 export const parseStringify = (value: any) => JSON.parse(JSON.stringify(value));
+// export const parseStringify = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 
-export const removeSpecialCharacters = (value: string) => {
+export const removeSpecialCharacters = (value: string) =>
+{
   return value.replace(/[^\w\s]/gi, "");
 };
 
-interface UrlQueryParams {
+interface UrlQueryParams
+{
   params: string;
   key: string;
   value: string;
 }
 
-export function formUrlQuery({ params, key, value }: UrlQueryParams) {
+export function formUrlQuery({ params, key, value }: UrlQueryParams)
+{
   const currentUrl = qs.parse(params);
 
   currentUrl[key] = value;
@@ -102,8 +109,10 @@ export function formUrlQuery({ params, key, value }: UrlQueryParams) {
   );
 }
 
-export function getAccountTypeColors(type: AccountTypes) {
-  switch (type) {
+export function getAccountTypeColors(type: AccountTypes)
+{
+  switch (type)
+  {
     case "depository":
       return {
         bg: "bg-blue-25",
@@ -132,27 +141,31 @@ export function getAccountTypeColors(type: AccountTypes) {
 
 export function countTransactionCategories(
   transactions: Transaction[]
-): CategoryCount[] {
+): CategoryCount[]
+{
   const categoryCounts: { [category: string]: number } = {};
   let totalCount = 0;
 
   // Iterate over each transaction
-  transactions &&
-    transactions.forEach((transaction) => {
-      // Extract the category from the transaction
-      const category = transaction.category;
+  // transactions &&
+  transactions?.forEach((transaction) =>
+  {
+    // Extract the category from the transaction
+    const category = transaction.category;
 
-      // If the category exists in the categoryCounts object, increment its count
-      if (categoryCounts.hasOwnProperty(category)) {
-        categoryCounts[category]++;
-      } else {
-        // Otherwise, initialize the count to 1
-        categoryCounts[category] = 1;
-      }
+    // If the category exists in the categoryCounts object, increment its count
+    if (categoryCounts.hasOwnProperty(category))
+    {
+      categoryCounts[category]++;
+    } else
+    {
+      // Otherwise, initialize the count to 1
+      categoryCounts[category] = 1;
+    }
 
-      // Increment total count
-      totalCount++;
-    });
+    // Increment total count
+    totalCount++;
+  });
 
   // Convert the categoryCounts object to an array of objects
   const aggregatedCategories: CategoryCount[] = Object.keys(categoryCounts).map(
@@ -169,7 +182,8 @@ export function countTransactionCategories(
   return aggregatedCategories;
 }
 
-export function extractCustomerIdFromUrl(url: string) {
+export function extractCustomerIdFromUrl(url: string)
+{
   // Split the URL string by '/'
   const parts = url.split("/");
 
@@ -179,15 +193,18 @@ export function extractCustomerIdFromUrl(url: string) {
   return customerId;
 }
 
-export function encryptId(id: string) {
+export function encryptId(id: string)
+{
   return btoa(id);
 }
 
-export function decryptId(id: string) {
+export function decryptId(id: string)
+{
   return atob(id);
 }
 
-export const getTransactionStatus = (date: Date) => {
+export const getTransactionStatus = (date: Date) =>
+{
   const today = new Date();
   const twoDaysAgo = new Date(today);
   twoDaysAgo.setDate(today.getDate() - 2);

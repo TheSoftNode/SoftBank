@@ -5,13 +5,16 @@ import { useRouter } from 'next/navigation';
 import { createLinkToken, exchangePublicToken } from '@/lib/actions/user.actions';
 import Image from 'next/image';
 
-const PlaidLink = ({ user, variant }: PlaidLinkProps) => {
+const PlaidLink = ({ user, variant }: PlaidLinkProps) =>
+{
   const router = useRouter();
 
   const [token, setToken] = useState('');
 
-  useEffect(() => {
-    const getLinkToken = async () => {
+  useEffect(() =>
+  {
+    const getLinkToken = async () =>
+    {
       const data = await createLinkToken(user);
 
       setToken(data?.linkToken);
@@ -20,7 +23,8 @@ const PlaidLink = ({ user, variant }: PlaidLinkProps) => {
     getLinkToken();
   }, [user]);
 
-  const onSuccess = useCallback<PlaidLinkOnSuccess>(async (public_token: string) => {
+  const onSuccess = useCallback<PlaidLinkOnSuccess>(async (public_token: string) =>
+  {
     await exchangePublicToken({
       publicToken: public_token,
       user,
@@ -28,14 +32,14 @@ const PlaidLink = ({ user, variant }: PlaidLinkProps) => {
 
     router.push('/');
   }, [user])
-  
+
   const config: PlaidLinkOptions = {
     token,
     onSuccess
   }
 
   const { open, ready } = usePlaidLink(config);
-  
+
   return (
     <>
       {variant === 'primary' ? (
@@ -46,9 +50,9 @@ const PlaidLink = ({ user, variant }: PlaidLinkProps) => {
         >
           Connect bank
         </Button>
-      ): variant === 'ghost' ? (
+      ) : variant === 'ghost' ? (
         <Button onClick={() => open()} variant="ghost" className="plaidlink-ghost">
-          <Image 
+          <Image
             src="/icons/connect-bank.svg"
             alt="connect bank"
             width={24}
@@ -56,9 +60,9 @@ const PlaidLink = ({ user, variant }: PlaidLinkProps) => {
           />
           <p className='hiddenl text-[16px] font-semibold text-black-2 xl:block'>Connect bank</p>
         </Button>
-      ): (
+      ) : (
         <Button onClick={() => open()} className="plaidlink-default">
-          <Image 
+          <Image
             src="/icons/connect-bank.svg"
             alt="connect bank"
             width={24}

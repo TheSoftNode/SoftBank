@@ -1,6 +1,7 @@
 "use server";
 
-import {
+import
+{
   CountryCode,
 } from "plaid";
 
@@ -11,13 +12,16 @@ import { getTransactionsByBankId } from "./transaction.actions";
 import { getBanks, getBank } from "./user.actions";
 
 // Get multiple bank accounts
-export const getAccounts = async ({ userId }: getAccountsProps) => {
-  try {
+export const getAccounts = async ({ userId }: getAccountsProps) =>
+{
+  try
+  {
     // get banks from db
     const banks = await getBanks({ userId });
 
     const accounts = await Promise.all(
-      banks?.map(async (bank: Bank) => {
+      banks?.map(async (bank: Bank) =>
+      {
         // get each account info from plaid
         const accountsResponse = await plaidClient.accountsGet({
           access_token: bank.accessToken,
@@ -48,19 +52,23 @@ export const getAccounts = async ({ userId }: getAccountsProps) => {
     );
 
     const totalBanks = accounts.length;
-    const totalCurrentBalance = accounts.reduce((total, account) => {
+    const totalCurrentBalance = accounts.reduce((total, account) =>
+    {
       return total + account.currentBalance;
     }, 0);
 
     return parseStringify({ data: accounts, totalBanks, totalCurrentBalance });
-  } catch (error) {
+  } catch (error)
+  {
     console.error("An error occurred while getting the accounts:", error);
   }
 };
 
 // Get one bank account
-export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
-  try {
+export const getAccount = async ({ appwriteItemId }: getAccountProps) =>
+{
+  try
+  {
     // get bank from db
     const bank = await getBank({ documentId: appwriteItemId });
 
@@ -110,7 +118,7 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
     };
 
     // sort transactions by date such that the most recent transaction is first
-      const allTransactions = [...transactions, ...transferTransactions].sort(
+    const allTransactions = [...transactions, ...transferTransactions].sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     );
 
@@ -118,7 +126,8 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
       data: account,
       transactions: allTransactions,
     });
-  } catch (error) {
+  } catch (error)
+  {
     console.error("An error occurred while getting the account:", error);
   }
 };
@@ -126,8 +135,10 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
 // Get bank info
 export const getInstitution = async ({
   institutionId,
-}: getInstitutionProps) => {
-  try {
+}: getInstitutionProps) =>
+{
+  try
+  {
     const institutionResponse = await plaidClient.institutionsGetById({
       institution_id: institutionId,
       country_codes: ["US"] as CountryCode[],
@@ -136,7 +147,8 @@ export const getInstitution = async ({
     const intitution = institutionResponse.data.institution;
 
     return parseStringify(intitution);
-  } catch (error) {
+  } catch (error)
+  {
     console.error("An error occurred while getting the accounts:", error);
   }
 };
@@ -144,13 +156,16 @@ export const getInstitution = async ({
 // Get transactions
 export const getTransactions = async ({
   accessToken,
-}: getTransactionsProps) => {
+}: getTransactionsProps) =>
+{
   let hasMore = true;
-  let transactions: any = [];
+  let transactions: Transaction[] = [];
 
-  try {
+  try
+  {
     // Iterate through each page of new transaction updates for item
-    while (hasMore) {
+    while (hasMore)
+    {
       const response = await plaidClient.transactionsSync({
         access_token: accessToken,
       });
@@ -159,22 +174,28 @@ export const getTransactions = async ({
 
       transactions = response.data.added.map((transaction) => ({
         id: transaction.transaction_id,
+        $id: transaction.transaction_id, // Assuming this is the same as id
         name: transaction.name,
-        paymentChannel: transaction.payment_channel,
-        type: transaction.payment_channel,
+        paymentChannel: transaction.payment_channel as string,
+        type: transaction.payment_channel as string,
         accountId: transaction.account_id,
         amount: transaction.amount,
         pending: transaction.pending,
         category: transaction.category ? transaction.category[0] : "",
         date: transaction.date,
-        image: transaction.logo_url,
+        image: transaction.logo_url || "",
+        $createdAt: transaction.date, // Assuming this is the same as date
+        channel: transaction.payment_channel as string, // Assuming this is the same as paymentChannel
+        senderBankId: "", // Add appropriate value if available
+        receiverBankId: "", // Add appropriate value if available
       }));
 
       hasMore = data.has_more;
     }
 
     return parseStringify(transactions);
-  } catch (error) {
+  } catch (error)
+  {
     console.error("An error occurred while getting the accounts:", error);
   }
 };
